@@ -1,0 +1,20 @@
+#background {
+    -fx-background-color: #829595;
+}
+
+#grid {
+    -fx-background-color: transparent;
+}
+
+#dark {
+    -fx-background-color: black;
+}
+
+.spane {
+    -fx-background-color: pink;
+}
+
+.pane {
+    -fx-background-color: #829595;
+}
+
