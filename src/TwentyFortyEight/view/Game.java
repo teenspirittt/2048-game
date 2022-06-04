@@ -47,8 +47,11 @@ public class Game {
     private final MenuItem saveMenuItem = new MenuItem("Save as");
     private final MenuItem loadMenuItem = new MenuItem("Load");
     private final MenuItem exitMenuItem = new MenuItem("Exit");
+    private final MenuItem newGameMenuItem = new MenuItem("New Game");
+    private final MenuItem showLeaderboard = new MenuItem("Show Leaderboard");
     public final MenuItem darkModeMenuItem = new MenuItem("Dark Mode");
     public final MenuItem lightModeMenuItem = new MenuItem("Light Mode");
+
 
 
     public Game() {
@@ -83,6 +86,8 @@ public class Game {
         redrawGrid();
         menuInit();
         stageInit();
+        newGameMenuLogic();
+        showLeaderboardLogic();
         root.getChildren().addAll(tileView, scoreIntText, scoreText);
     }
 
@@ -112,7 +117,7 @@ public class Game {
         menuBar.setPrefWidth(600);
 
         fileMenu.getItems().addAll(saveMenuItem, loadMenuItem, exitMenuItem);
-        menuMenu.getItems().addAll();
+        menuMenu.getItems().addAll(newGameMenuItem,showLeaderboard);
         viewMenu.getItems().addAll(darkModeMenuItem, lightModeMenuItem);
         helpMenu.getItems().addAll();
 
@@ -130,8 +135,11 @@ public class Game {
         }
     }
 
-
-
+    private void newGameMenuLogic() {
+        newGameMenuItem.setOnAction(actionEvent -> {
+            openNewGameDialog();
+        });
+    }
 
     public void gridInit() {
         for (int y = 0; y < 4; y++) {
@@ -213,7 +221,7 @@ public class Game {
 
 
 
-    public void openWinDialog() {
+    private void openWinDialog() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("You are WINNER");
         alert.setHeaderText("WIN");
@@ -225,7 +233,7 @@ public class Game {
     }
 
 
-    public void openLoseDialog() {
+    private void openLoseDialog() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("GAME OVER");
         alert.setHeaderText("LOSE");
@@ -237,27 +245,29 @@ public class Game {
 
     }
 
+    private void openNewGameDialog() {
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Warning!");
+        alert.setHeaderText("Warning! Are you sure yoy want to start a new game? ");
+        alert.setContentText("This game will end a new one will start");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK)
+            restartGame();
+    }
+
+    private void showLeaderboardLogic() {
+        showLeaderboard.setOnAction(actionEvent -> {
+            RegisterView registerView = new RegisterView();
+        });
+
+    }
+
     private void restartGame() {
         score = 0;
         grid = new GameGrid();
         gameGrid.getChildren().clear();
         gridInit();
         redrawGrid();
-    }
-
-    public StackPane getTileView() {
-        return tileView;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public Scene getScene() {
-        return scene;
-    }
-
-    public Group getRoot() {
-        return this.root;
     }
 }
