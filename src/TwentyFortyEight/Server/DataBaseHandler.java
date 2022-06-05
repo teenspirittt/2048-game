@@ -7,26 +7,49 @@ public class DataBaseHandler {
     private final String URL = "jdbc:postgresql://localhost:5432/2048";
     private final String username = "postgres";
     private final String password = "root";
-    private final String tableName = "rabbits";
+    private final String tableName = "leaderboards";
 
 
-
-    public void addLogin(String login) {
-        try (Connection connection = DriverManager.getConnection(URL, username, password)) {
-            Class.forName("org.postgresql.Driver");
-            Statement statement = connection.createStatement();
-
-            ResultSet rs = statement.executeQuery("SELECT EXISTS(SELECT * FROM" + tableName + "WHERE login = '" + login + "');");
-            boolean newLogin = true;
-            if (rs.next())
-                if (rs.getString(1).equals("1"))
-                    newLogin = false;
-            if (newLogin) {
-                statement.executeUpdate("insert into " + tableName + " VALUES ('"+login+"',0);");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public Connection getDbConnection() throws ClassNotFoundException, SQLException {
+        Connection dbConnection;
+        Class.forName("org.postgresql.Driver");
+        dbConnection = DriverManager.getConnection(URL, username, password);
+        return dbConnection;
     }
+
+    public ResultSet getUser(String username, String password) {
+        ResultSet rs = null;
+        String select = "SELECT * FROM " + tableName + " WHERE login =? AND password =?";
+
+        try {
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(select);
+
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+
+            rs = preparedStatement.executeQuery();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return rs;
+    }
+
+    public void signUpUser(String username, String password, int highScore) {
+        String insert = "insert into " + tableName + " VALUES (?,?,?);";
+        PreparedStatement preparedStatement = null;
+        try {
+
+            preparedStatement = getDbConnection().prepareStatement(insert);
+            preparedStatement.setString(1, username);
+            preparedStatement.setInt(2, highScore);
+            preparedStatement.setString(3, password);
+            preparedStatement.executeUpdate()
+            ;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
 

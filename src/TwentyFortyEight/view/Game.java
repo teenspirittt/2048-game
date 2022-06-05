@@ -2,7 +2,7 @@ package TwentyFortyEight.view;
 
 import java.util.*;
 
-import TwentyFortyEight.game.RegisterController;
+import TwentyFortyEight.game.*;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -14,16 +14,21 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import TwentyFortyEight.game.Direction;
-import TwentyFortyEight.game.GameGrid;
-import TwentyFortyEight.game.Tile;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
-
 public class Game {
+    private static Game instance;
+
+    public static synchronized Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
+    }
+
 
     private boolean canMove;
     private final Stage stage = new Stage();
@@ -36,7 +41,7 @@ public class Game {
 
     private Text scoreIntText;
     private Text scoreText = new Text("score:");
-    private int score;
+    private int score = 0;
 
 
     private final MenuBar menuBar = new MenuBar();
@@ -56,7 +61,6 @@ public class Game {
     RegisterController registerController;
 
 
-
     public Game() {
         canMove = true;
 
@@ -69,15 +73,14 @@ public class Game {
     }
 
     public void init() {
-        score = 0;
         registerController = RegisterController.getInstance();
-        registerController.init();
         scoreIntText = new Text(Integer.toString(score));
         scoreIntText.setFont(Font.font("YU Gothic", 35));
         scoreText.setFont(Font.font("YU Gothic", 40));
         scoreText.setFill(Color.rgb(60, 60, 60));
         scoreIntText.setFill(Color.rgb(60, 60, 60));
-
+        RegisterView.getInstance().init();
+        LeaderBoardView.getInstance().init();
         scoreText.setX(50);
         scoreText.setY(230);
         scoreIntText.setX(180);
@@ -100,7 +103,7 @@ public class Game {
         stage.getIcons().add(icon);
         stage.setTitle("2048 by teenspirit");
         stage.setResizable(false);
-        scene.setFill(Color.rgb(187,173,160));
+        scene.setFill(Color.rgb(187, 173, 160));
         scene.setOnKeyPressed((event) -> {
             if (canMove) {
                 switch (event.getCode()) {
@@ -120,7 +123,7 @@ public class Game {
         menuBar.setPrefWidth(600);
 
         fileMenu.getItems().addAll(saveMenuItem, loadMenuItem, exitMenuItem);
-        menuMenu.getItems().addAll(newGameMenuItem,showLeaderboard);
+        menuMenu.getItems().addAll(newGameMenuItem, showLeaderboard);
         viewMenu.getItems().addAll(darkModeMenuItem, lightModeMenuItem);
         helpMenu.getItems().addAll();
 
@@ -129,19 +132,21 @@ public class Game {
 
     public void handleMovements(Direction d) {
         if (grid.isGameOver() || grid.isGameOver() && grid.getHighestTile() < 4096) {
-            this.score += grid.move(d);
+            score += grid.move(d);
             doTransitions();
         } else if (grid.getHighestTile() == 4096) {
             openWinDialog();
         } else {
             openLoseDialog();
         }
+        System.out.println(score);
     }
 
     private void newGameMenuLogic() {
         newGameMenuItem.setOnAction(actionEvent -> {
             openNewGameDialog();
         });
+
     }
 
     public void gridInit() {
@@ -215,13 +220,13 @@ public class Game {
                 }
             }
         }
-        this.scoreIntText.setText("" + score);
+
+        scoreIntText.setText("" + score);
     }
 
     public boolean canMove() {
         return this.canMove;
     }
-
 
 
     private void openWinDialog() {
@@ -261,8 +266,7 @@ public class Game {
 
     private void showLeaderboardLogic() {
         showLeaderboard.setOnAction(actionEvent -> {
-            RegisterView registerView = RegisterView.getInstance();
-            registerView.init();
+           RegisterController.getInstance().showRegWindow();
         });
 
     }
@@ -273,5 +277,9 @@ public class Game {
         gameGrid.getChildren().clear();
         gridInit();
         redrawGrid();
+    }
+
+    public int getScore() {
+        return score;
     }
 }

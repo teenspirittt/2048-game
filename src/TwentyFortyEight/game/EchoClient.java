@@ -1,6 +1,6 @@
 package TwentyFortyEight.game;
 
-import TwentyFortyEight.Server.HighScorePackage;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -12,7 +12,7 @@ public class EchoClient {
     private ObjectInputStream ois;
 
 
-    public void startConnection(String ip, int port) {
+    public void startConnection(String username,String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
 
@@ -21,16 +21,15 @@ public class EchoClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 
-    public void sendHighScore(HighScorePackage highScorePackage) {
+    public void sendInfo() {
         try{
             oos.writeUTF("SEND.PACKAGE");
             oos.reset();
 
-          //  oos.writeObject();
+           // oos.writeObject();
             oos.reset();
 
         }catch (IOException e) {

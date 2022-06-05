@@ -1,6 +1,5 @@
 package TwentyFortyEight.view;
 
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -46,11 +45,6 @@ public class RegisterView {
         stage.initModality(Modality.NONE);
         stage.setTitle("login window");
         stage.setResizable(false);
-        stage.setOnCloseRequest(windowEvent -> {
-            Platform.exit();
-            System.exit(0);
-        });
-        stage.show();
     }
 
 
