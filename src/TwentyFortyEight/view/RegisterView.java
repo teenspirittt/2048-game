@@ -13,6 +13,15 @@ import javafx.stage.Stage;
 
 
 public class RegisterView {
+    private static RegisterView instance;
+
+    public static synchronized RegisterView getInstance() {
+        if(instance == null) {
+            instance = new RegisterView();
+        }
+        return instance;
+    }
+
     private final int sceneWidth = 500;
     private final int sceneHeight = 400;
     private final Group root = new Group();
@@ -26,10 +35,10 @@ public class RegisterView {
     private final TextField regConfirmPasswordField = new TextField();
     private final TextField logPasswordField = new TextField();
     private final TextField logUsernameField = new TextField();
-    private final Button signUp = new Button();
-    private final Button signIn = new Button();
+    private final Button signUp = new Button("sign up");
+    private final Button signIn = new Button("sign in");
 
-    public RegisterView() {
+    public void init() {
         textInit();
         buttonInit();
         textFieldInit();
@@ -45,30 +54,33 @@ public class RegisterView {
     }
 
 
-
-
-
     private void textInit() {
         register.setX(45);
         register.setY(116);
         register.setFont(Font.font("YU Gothic", 24));
-        register.setFill(Color.rgb(60,60,60));
+        register.setFill(Color.rgb(60, 60, 60));
 
         login.setX(306);
         login.setY(116);
         login.setFont(Font.font("YU Gothic", 24));
-        login.setFill(Color.rgb(60,60,60));
+        login.setFill(Color.rgb(60, 60, 60));
 
-        root.getChildren().addAll(register,login);
+        root.getChildren().addAll(register, login);
     }
 
     private void buttonInit() {
-        signIn.setLayoutX(355);
+        signIn.setLayoutX(345);
         signIn.setLayoutY(208);
+        signIn.setFont(Font.font("YU Gothic", 15));
+        signIn.setTextFill(Color.rgb(60,60,60));
+        signIn.setStyle("-fx-background-color: transparent");
 
-        signUp.setLayoutX(94);
+        signUp.setLayoutX(84);
         signUp.setLayoutY(251);
-        root.getChildren().addAll(signIn,signUp);
+        signUp.setFont(Font.font("YU Gothic", 15));
+        signUp.setTextFill(Color.rgb(60,60,60));
+        signUp.setStyle("-fx-background-color: transparent");
+        root.getChildren().addAll(signIn, signUp);
     }
 
     private void textFieldInit() {
@@ -77,7 +89,7 @@ public class RegisterView {
         regUsernameField.setFont(Font.font("YU Gothic", 15));
         regUsernameField.setPrefWidth(149);
         regUsernameField.setPrefHeight(25);
-
+        regUsernameField.setStyle("-fx-background-color: #fffff7");
         regUsernameField.setPromptText("username");
 
         regPasswordField.setLayoutX(45);
@@ -85,6 +97,7 @@ public class RegisterView {
         regPasswordField.setFont(Font.font("YU Gothic", 15));
         regPasswordField.setPrefWidth(149);
         regPasswordField.setPrefHeight(25);
+        regPasswordField.setStyle("-fx-background-color: #fffff7");
         regPasswordField.setPromptText("password");
 
         regConfirmPasswordField.setLayoutX(45);
@@ -92,6 +105,7 @@ public class RegisterView {
         regConfirmPasswordField.setFont(Font.font("YU Gothic", 15));
         regConfirmPasswordField.setPrefWidth(149);
         regConfirmPasswordField.setPrefHeight(25);
+        regConfirmPasswordField.setStyle("-fx-background-color: #fffff7");
         regConfirmPasswordField.setPromptText("confirm password");
 
         logUsernameField.setLayoutX(306);
@@ -99,6 +113,7 @@ public class RegisterView {
         logUsernameField.setFont(Font.font("YU Gothic", 15));
         logUsernameField.setPrefWidth(149);
         logUsernameField.setPrefHeight(25);
+        logUsernameField.setStyle("-fx-background-color: #fffff7");
         logUsernameField.setPromptText("username");
 
         logPasswordField.setLayoutX(306);
@@ -106,10 +121,66 @@ public class RegisterView {
         logPasswordField.setFont(Font.font("YU Gothic", 15));
         logPasswordField.setPrefWidth(149);
         logPasswordField.setPrefHeight(25);
+        logPasswordField.setStyle("-fx-background-color: #fffff7");
         logPasswordField.setPromptText("password");
 
         root.getChildren().addAll(regPasswordField, regConfirmPasswordField, regUsernameField, logPasswordField, logUsernameField);
     }
 
 
+    public int getSceneWidth() {
+        return sceneWidth;
+    }
+
+    public int getSceneHeight() {
+        return sceneHeight;
+    }
+
+    public Group getRoot() {
+        return root;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public Text getRegister() {
+        return register;
+    }
+
+    public Text getLogin() {
+        return login;
+    }
+
+    public TextField getRegUsernameField() {
+        return regUsernameField;
+    }
+
+    public TextField getRegPasswordField() {
+        return regPasswordField;
+    }
+
+    public TextField getRegConfirmPasswordField() {
+        return regConfirmPasswordField;
+    }
+
+    public TextField getLogPasswordField() {
+        return logPasswordField;
+    }
+
+    public TextField getLogUsernameField() {
+        return logUsernameField;
+    }
+
+    public Button getSignUp() {
+        return signUp;
+    }
+
+    public Button getSignIn() {
+        return signIn;
+    }
 }

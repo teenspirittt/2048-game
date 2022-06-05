@@ -2,6 +2,7 @@ package TwentyFortyEight.view;
 
 import java.util.*;
 
+import TwentyFortyEight.game.RegisterController;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -52,6 +53,8 @@ public class Game {
     public final MenuItem darkModeMenuItem = new MenuItem("Dark Mode");
     public final MenuItem lightModeMenuItem = new MenuItem("Light Mode");
 
+    RegisterController registerController;
+
 
 
     public Game() {
@@ -67,7 +70,8 @@ public class Game {
 
     public void init() {
         score = 0;
-
+        registerController = RegisterController.getInstance();
+        registerController.init();
         scoreIntText = new Text(Integer.toString(score));
         scoreIntText.setFont(Font.font("YU Gothic", 35));
         scoreText.setFont(Font.font("YU Gothic", 40));
@@ -78,7 +82,6 @@ public class Game {
         scoreText.setY(230);
         scoreIntText.setX(180);
         scoreIntText.setY(230);
-
         tileView.setLayoutX(50);
         tileView.setLayoutY(250);
 
@@ -258,7 +261,8 @@ public class Game {
 
     private void showLeaderboardLogic() {
         showLeaderboard.setOnAction(actionEvent -> {
-            RegisterView registerView = new RegisterView();
+            RegisterView registerView = RegisterView.getInstance();
+            registerView.init();
         });
 
     }
