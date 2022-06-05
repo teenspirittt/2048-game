@@ -14,7 +14,7 @@ public class LeaderBoardController {
         return instance;
     }
 
-    LeaderBoardView rl  = LeaderBoardView.getInstance();
+    LeaderBoardView rl = LeaderBoardView.getInstance();
 
 
     public void showLBWindow() {
@@ -23,7 +23,6 @@ public class LeaderBoardController {
             if (keyEvent.getCode() == KeyCode.ESCAPE)
                 hideRegWin();
         });
-
     }
 
     private void hideRegWin() {

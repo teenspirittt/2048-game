@@ -4,6 +4,7 @@ import java.util.*;
 
 import TwentyFortyEight.game.*;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -40,8 +41,9 @@ public class Game {
     private final Pane gameGrid = new Pane();
 
     private Text scoreIntText;
-    private Text scoreText = new Text("score:");
-    private int score = 0;
+    private final Text scoreText = new Text("score:");
+    private int currentScore = 0;
+    private int highScore = 0;
 
 
     private final MenuBar menuBar = new MenuBar();
@@ -74,7 +76,7 @@ public class Game {
 
     public void init() {
         registerController = RegisterController.getInstance();
-        scoreIntText = new Text(Integer.toString(score));
+        scoreIntText = new Text(Integer.toString(currentScore));
         scoreIntText.setFont(Font.font("YU Gothic", 35));
         scoreText.setFont(Font.font("YU Gothic", 40));
         scoreText.setFill(Color.rgb(60, 60, 60));
@@ -87,7 +89,7 @@ public class Game {
         scoreIntText.setY(230);
         tileView.setLayoutX(50);
         tileView.setLayoutY(250);
-
+        exitLogic();
         gridInit();
         redrawGrid();
         menuInit();
@@ -103,6 +105,10 @@ public class Game {
         stage.getIcons().add(icon);
         stage.setTitle("2048 by teenspirit");
         stage.setResizable(false);
+        stage.setOnCloseRequest(windowEvent -> {
+            Platform.exit();
+            System.exit(0);
+        });
         scene.setFill(Color.rgb(187, 173, 160));
         scene.setOnKeyPressed((event) -> {
             if (canMove) {
@@ -132,21 +138,20 @@ public class Game {
 
     public void handleMovements(Direction d) {
         if (grid.isGameOver() || grid.isGameOver() && grid.getHighestTile() < 4096) {
-            score += grid.move(d);
+            currentScore += grid.move(d);
             doTransitions();
         } else if (grid.getHighestTile() == 4096) {
             openWinDialog();
         } else {
             openLoseDialog();
+            if (currentScore > highScore)
+                highScore = currentScore;
         }
-        System.out.println(score);
+        System.out.println(currentScore);
     }
 
     private void newGameMenuLogic() {
-        newGameMenuItem.setOnAction(actionEvent -> {
-            openNewGameDialog();
-        });
-
+        newGameMenuItem.setOnAction(actionEvent -> openNewGameDialog());
     }
 
     public void gridInit() {
@@ -221,7 +226,7 @@ public class Game {
             }
         }
 
-        scoreIntText.setText("" + score);
+        scoreIntText.setText("" + currentScore);
     }
 
     public boolean canMove() {
@@ -265,21 +270,26 @@ public class Game {
     }
 
     private void showLeaderboardLogic() {
-        showLeaderboard.setOnAction(actionEvent -> {
-           RegisterController.getInstance().showRegWindow();
-        });
-
+        showLeaderboard.setOnAction(actionEvent -> RegisterController.getInstance().showRegWindow());
     }
 
+    private void exitLogic() {
+        exitMenuItem.setOnAction(actionEvent -> {
+            Platform.exit();
+            System.exit(0);
+        });
+    }
+
+
     private void restartGame() {
-        score = 0;
+        currentScore = 0;
         grid = new GameGrid();
         gameGrid.getChildren().clear();
         gridInit();
         redrawGrid();
     }
 
-    public int getScore() {
-        return score;
+    public int getCurrentScore() {
+        return currentScore;
     }
 }

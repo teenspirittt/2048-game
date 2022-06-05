@@ -57,47 +57,57 @@ public class RegisterController {
             String username = registerView.getRegUsernameField().getText();
             String password = registerView.getRegPasswordField().getText();
             String confirmPassword = registerView.getRegConfirmPasswordField().getText();
-            boolean isUserInDb = checkUserInDb(username, password);
-            if (!isUserInDb) {
-                openHiredUsernameDialog(username);
-            } else {
+            System.out.println(isCorrectUsername(username));
+            if (!isCorrectUsername(username)) {
                 if (Objects.equals(password, confirmPassword)) {
                     if (!password.equals(""))
-                        dataBaseHandler.signUpUser(username, password, Game.getInstance().getScore());
+                        dataBaseHandler.signUpUser(username, password, Game.getInstance().getCurrentScore());
                     else
                         openEmptyFieldDialog();
                 } else {
                     openMismatchedPasswords();
                 }
+            } else {
+                openHiredUsernameDialog(username);
             }
         });
     }
 
     private void loginUser(String username, String password) {
-        boolean isUserInDb = checkUserInDb(username, password);
-        if (isUserInDb) {
-            openHiredUsernameDialog(username);
-        } else {
-            registerView.getScene().getWindow().hide();
-            LeaderBoardController.getInstance().showLBWindow();
-        }
-    }
-
-    private boolean checkUserInDb(String username, String password) {
-        DataBaseHandler dataBaseHandler = new DataBaseHandler();
-        ResultSet res = dataBaseHandler.getUser(username, password);
-        int counter = 0;
-        while (true) {
-            try {
-                if (!res.next()) break;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        if (isCorrectUsername(username)) {
+            if (isCorrectPassword(username, password)) {
+                registerView.getScene().getWindow().hide();
+                LeaderBoardController.getInstance().showLBWindow();
+            } else {
+                openIncorrectPasswordDialog();
             }
-            counter++;
+        } else {
+            openDoesntExistUserDialog(username);
         }
-        return counter < 1;
     }
 
+    private boolean isCorrectUsername(String username) {
+        DataBaseHandler dataBaseHandler = new DataBaseHandler();
+        ResultSet res = dataBaseHandler.getUser(username);
+        return matchCounter(res) >= 1;
+    }
+
+    private boolean isCorrectPassword(String username, String password) {
+        DataBaseHandler dataBaseHandler = new DataBaseHandler();
+        ResultSet res = dataBaseHandler.getPassword(username, password);
+        return matchCounter(res) >= 1;
+    }
+
+    private int matchCounter(ResultSet res) {
+        int counter = 0;
+        try {
+            while (res.next())
+                counter++;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return counter;
+    }
 
     private void openEmptyFieldDialog() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -111,14 +121,25 @@ public class RegisterController {
     private void openHiredUsernameDialog(String name) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning!");
-        alert.setHeaderText("User with nickname " + name + "already registered!");
+        alert.setHeaderText("User with nickname " + name + " already registered!");
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
 
         }
     }
 
-    private void openMismatchedPasswords(){
+    private void openDoesntExistUserDialog(String name) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning!");
+        alert.setHeaderText("User " + name + " doesn't exist!");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+
+        }
+    }
+
+
+    private void openMismatchedPasswords() {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Warning!");
         alert.setHeaderText("Mismatched passwords!");
