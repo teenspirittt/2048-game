@@ -1,9 +1,10 @@
-package TwentyFortyEight.game;
+package game;
 
-import TwentyFortyEight.Server.DataBaseHandler;
-import TwentyFortyEight.view.Game;
-import TwentyFortyEight.view.RegisterView;
+
+import Server.DataBaseHandler;
 import javafx.scene.input.KeyCode;
+import view.Game;
+import view.RegisterView;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,8 +1,7 @@
-package TwentyFortyEight;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import TwentyFortyEight.view.Game;
+import view.Game;
 
 
 public class Main extends Application {

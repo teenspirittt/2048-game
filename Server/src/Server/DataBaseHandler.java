@@ -1,4 +1,4 @@
-package TwentyFortyEight.Server;
+package Server;
 
 import java.sql.*;
 
