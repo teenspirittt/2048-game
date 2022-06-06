@@ -3,14 +3,11 @@ package TwentyFortyEight.game;
 import TwentyFortyEight.Server.DataBaseHandler;
 import TwentyFortyEight.view.Game;
 import TwentyFortyEight.view.RegisterView;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.Optional;
 
 public class RegisterController {
     private static RegisterController instance;
@@ -46,7 +43,7 @@ public class RegisterController {
             if (!username.equals("") && !password.equals("")) {
                 loginUser(username, password);
             } else {
-                openEmptyFieldDialog();
+                WarningDialog.emptyField();
             }
         });
     }
@@ -57,33 +54,30 @@ public class RegisterController {
             String username = registerView.getRegUsernameField().getText();
             String password = registerView.getRegPasswordField().getText();
             String confirmPassword = registerView.getRegConfirmPasswordField().getText();
-            System.out.println(isCorrectUsername(username));
+
             if (!isCorrectUsername(username)) {
                 if (Objects.equals(password, confirmPassword)) {
                     if (!password.equals(""))
-                        dataBaseHandler.signUpUser(username, password, Game.getInstance().getCurrentScore());
+                        dataBaseHandler.signUpUser(username, password, Game.getInstance().getHighScore());
                     else
-                        openEmptyFieldDialog();
+                        WarningDialog.emptyField();
                 } else {
-                    openMismatchedPasswords();
+                    WarningDialog.mismatchedPasswords();
                 }
             } else {
-                openHiredUsernameDialog(username);
+                WarningDialog.usernameInUse(username);
             }
         });
     }
 
     private void loginUser(String username, String password) {
-        if (isCorrectUsername(username)) {
-            if (isCorrectPassword(username, password)) {
-                registerView.getScene().getWindow().hide();
-                LeaderBoardController.getInstance().showLBWindow();
-            } else {
-                openIncorrectPasswordDialog();
-            }
-        } else {
-            openDoesntExistUserDialog(username);
-        }
+        if (isCorrectUsername(username))
+            if (isCorrectPassword(username, password))
+                openLeaderBoardWindow();
+            else
+                WarningDialog.incorrectPassword();
+        else
+            WarningDialog.userNotFound(username);
     }
 
     private boolean isCorrectUsername(String username) {
@@ -109,53 +103,8 @@ public class RegisterController {
         return counter;
     }
 
-    private void openEmptyFieldDialog() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("Empty text fields!");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-        }
-    }
-
-    private void openHiredUsernameDialog(String name) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("User with nickname " + name + " already registered!");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-
-        }
-    }
-
-    private void openDoesntExistUserDialog(String name) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("User " + name + " doesn't exist!");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-
-        }
-    }
-
-
-    private void openMismatchedPasswords() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("Mismatched passwords!");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-
-        }
-    }
-
-    private void openIncorrectPasswordDialog() {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning!");
-        alert.setHeaderText("Incorrect password!");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-
-        }
+    private void openLeaderBoardWindow() {
+        registerView.getScene().getWindow().hide();
+        LeaderBoardController.getInstance().showLBWindow();
     }
 }

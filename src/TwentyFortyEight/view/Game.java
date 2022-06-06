@@ -147,7 +147,6 @@ public class Game {
             if (currentScore > highScore)
                 highScore = currentScore;
         }
-        System.out.println(currentScore);
     }
 
     private void newGameMenuLogic() {
@@ -225,12 +224,7 @@ public class Game {
                 }
             }
         }
-
         scoreIntText.setText("" + currentScore);
-    }
-
-    public boolean canMove() {
-        return this.canMove;
     }
 
 
@@ -287,6 +281,10 @@ public class Game {
         gameGrid.getChildren().clear();
         gridInit();
         redrawGrid();
+    }
+
+    public int getHighScore() {
+        return highScore;
     }
 
     public int getCurrentScore() {

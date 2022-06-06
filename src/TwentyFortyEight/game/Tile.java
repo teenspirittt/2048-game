@@ -60,26 +60,6 @@ public class Tile extends StackPane {
         setColor();
     }
 
-
-    public int getValue() {
-        return this.value;
-    }
-
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public void setMerged(boolean merged) {
-        this.merged = merged;
-    }
-
-
-    public boolean isMerged() {
-        return merged;
-    }
-
-
     public TranslateTransition transition() {
         TranslateTransition tt = new TranslateTransition(Duration.millis(100), this);
         tt.setToY(x);
@@ -88,7 +68,6 @@ public class Tile extends StackPane {
         tt.setAutoReverse(true);
         return tt;
     }
-
 
     public void popTile() {
         ScaleTransition st = new ScaleTransition(Duration.millis(100), this);
@@ -100,6 +79,21 @@ public class Tile extends StackPane {
         setMerged(false);
     }
 
+    public int getValue() {
+        return this.value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public void setMerged(boolean merged) {
+        this.merged = merged;
+    }
+
+    public boolean isMerged() {
+        return merged;
+    }
 
     public int getX() {
         return x;
@@ -116,5 +110,4 @@ public class Tile extends StackPane {
     public void setY(int y) {
         this.y = y * 120 + y * 10;
     }
-
 }
