@@ -58,7 +58,8 @@ public class DataBaseHandler {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next())
-                return resultSet.getString(1).equals("1");
+                return resultSet.getString(1).equals("t");
+
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -74,7 +75,7 @@ public class DataBaseHandler {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next())
-                return resultSet.getString(1).equals("1");
+                return resultSet.getString(1).equals("t");
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -86,7 +87,6 @@ public class DataBaseHandler {
         ResultSet rs = null;
         String select = "SELECT * FROM " + tableName + "";
         try {
-
             PreparedStatement preparedStatement = getDbConnection().prepareStatement(select);
             rs = preparedStatement.executeQuery();
 
@@ -110,7 +110,6 @@ public class DataBaseHandler {
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
 

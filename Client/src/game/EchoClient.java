@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.Vector;
 
 
 public class EchoClient {
@@ -32,18 +32,18 @@ public class EchoClient {
         }
     }
 
-    public static ResultSet getLeaderBoard() {
-        ResultSet resultSet = null;
+    public static Vector<UserPackage> getLeaderBoard() {
+        Vector<UserPackage> userPackages;
         try {
             System.out.println("getLB");
             oos.writeObject("LEAD.BOARD");
             oos.reset();
 
-            resultSet = (ResultSet) ois.readObject();
+            userPackages = (Vector<UserPackage>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return resultSet;
+        return userPackages;
     }
 
     public static void sendObj(UserPackage userPackage) {

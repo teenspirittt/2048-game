@@ -1,6 +1,8 @@
 package Server;
 
+
 import java.io.Serializable;
+
 
 public class UserPackage implements Serializable {
     public int highScore;
@@ -13,6 +15,12 @@ public class UserPackage implements Serializable {
         this.password = password;
         this.highScore = highScore;
         this.message = message;
+    }
+
+    public UserPackage(String username, String password, int highScore) {
+        this.username = username;
+        this.password = password;
+        this.highScore = highScore;
     }
 
     public String getMessage() {

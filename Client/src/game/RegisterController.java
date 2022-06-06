@@ -5,11 +5,13 @@ import Server.DataBaseHandler;
 import Server.UserPackage;
 import javafx.scene.input.KeyCode;
 import view.Game;
+import view.LeaderBoardView;
 import view.RegisterView;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Vector;
 
 public class RegisterController {
     private static RegisterController instance;
@@ -47,15 +49,16 @@ public class RegisterController {
             if (!username.equals("") && !password.equals("")) {
                 UserPackage user = new UserPackage(username, password, Game.getInstance().getHighScore(), "LOGIN");
                 EchoClient.sendObj(user);
-                if (EchoClient.getResponse().equals("incorrect username")) {
+                String response = EchoClient.getResponse();
+                if (response.equals("incorrect username")) {
                     WarningDialog.userNotFound(username);
                 }
-                if (EchoClient.getResponse().equals("incorrect password")) {
+                if (response.equals("incorrect password")) {
                     WarningDialog.incorrectPassword();
                 }
-                if (EchoClient.getResponse().equals("correct")) {
-                    ResultSet rs = EchoClient.getLeaderBoard();
-                    openLeaderBoardWindow(rs);
+                if (response.equals("correct")) {
+                    Vector<UserPackage> userPackages = EchoClient.getLeaderBoard();
+                    openLeaderBoardWindow(userPackages);
                 }
             } else {
                 WarningDialog.emptyField();
@@ -64,7 +67,6 @@ public class RegisterController {
     }
 
     private void signUpButtonLogic() {
-
         registerView.getSignUp().setOnAction(actionEvent -> {
             System.out.println("REG BUT");
             String username = registerView.getRegUsernameField().getText();
@@ -77,8 +79,8 @@ public class RegisterController {
                     if (EchoClient.getResponse().equals("already exist")) {
                         WarningDialog.usernameInUse(username);
                     } else {
-                        ResultSet rs = EchoClient.getLeaderBoard();
-                        openLeaderBoardWindow(rs);
+                        Vector<UserPackage> userPackages = EchoClient.getLeaderBoard();
+                        openLeaderBoardWindow(userPackages);
                     }
                 } else {
                     WarningDialog.mismatchedPasswords();
@@ -90,9 +92,14 @@ public class RegisterController {
     }
 
 
-    private void openLeaderBoardWindow(ResultSet rs) {
+    private void openLeaderBoardWindow(Vector<UserPackage> userPackages) {
+
         registerView.getScene().getWindow().hide();
         LeaderBoardController.getInstance().showLBWindow();
+        LeaderBoardView.getInstance().tableInit();
+
+
         Game.getInstance().getShowLeaderboard().setOnAction(actionEvent -> LeaderBoardController.getInstance().showLBWindow());
+        LeaderBoardController.getInstance().drawTable(userPackages);
     }
 }
