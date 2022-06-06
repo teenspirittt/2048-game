@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class EchoClient {
@@ -37,8 +38,8 @@ public class EchoClient {
             System.out.println("getLB");
             oos.writeObject("LEAD.BOARD");
             oos.reset();
-            System.out.println(ois.readObject());
-           // resultSet = (ResultSet) ois.readObject();
+
+            resultSet = (ResultSet) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +59,6 @@ public class EchoClient {
     public static String getResponse() {
         String tmp = null;
         try {
-            System.out.println();
             tmp = (String) ois.readObject();
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,6 +68,7 @@ public class EchoClient {
         System.out.println(tmp);
         return tmp;
     }
+
 
     public void stopConnection() {
         try {

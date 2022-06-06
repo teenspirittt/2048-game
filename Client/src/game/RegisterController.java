@@ -39,7 +39,9 @@ public class RegisterController {
     }
 
     private void signInButtonLogic() {
+
         registerView.getSignIn().setOnAction(actionEvent -> {
+            System.out.println("LOG BUT");
             String username = registerView.getLogUsernameField().getText().trim();
             String password = registerView.getLogPasswordField().getText();
             if (!username.equals("") && !password.equals("")) {
@@ -62,8 +64,9 @@ public class RegisterController {
     }
 
     private void signUpButtonLogic() {
-        DataBaseHandler dataBaseHandler = new DataBaseHandler();
+
         registerView.getSignUp().setOnAction(actionEvent -> {
+            System.out.println("REG BUT");
             String username = registerView.getRegUsernameField().getText();
             String password = registerView.getRegPasswordField().getText();
             String confirmPassword = registerView.getRegConfirmPasswordField().getText();

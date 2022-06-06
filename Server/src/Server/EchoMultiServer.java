@@ -5,10 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Vector;
 
 
 public class EchoMultiServer {
@@ -79,20 +78,23 @@ public class EchoMultiServer {
 
         public void run() {
             try {
-
-                oos = new ObjectOutputStream(clientSocket.getOutputStream());
                 ois = new ObjectInputStream(clientSocket.getInputStream());
+                oos = new ObjectOutputStream(clientSocket.getOutputStream());
 
-                Object readObject = ois.readObject();
                 while (!clientSocket.isClosed() && !clientSocket.isOutputShutdown() && !clientSocket.isInputShutdown()) {
+                    Object readObject = ois.readObject();
 
-                    if (readObject instanceof String) {
+                    if (readObject instanceof String string) {
+                        System.out.println(string);
                         sendLeaderboard();
                     } else {
+
                         UserPackage userPackage = (UserPackage) readObject;
+
                         if (userPackage.getMessage().equals("LOGIN")) {
-                            if (isCorrectUsername(userPackage.username)) {
-                                if (isCorrectPassword(userPackage.username, userPackage.password)) {
+                            System.out.println("LOG");
+                            if (dataBaseHandler.isUsernameExist(userPackage.username)) {
+                                if (dataBaseHandler.isCorrectPassword(userPackage.username, userPackage.password)) {
                                     oos.writeObject("incorrect password");
                                     oos.reset();
                                 } else {
@@ -104,10 +106,14 @@ public class EchoMultiServer {
                                 oos.reset();
                             }
                         } else if (userPackage.getMessage().equals("REGISTER")) {
-                            if (isCorrectUsername(userPackage.username)) {
+                            System.out.println("reg");
+                            System.out.println(dataBaseHandler.isUsernameExist(userPackage.username));
+                            if (!dataBaseHandler.isUsernameExist(userPackage.username)) {
                                 oos.writeObject("already exist");
+                                System.out.println("if");
                                 oos.reset();
                             } else {
+                                System.out.println("else");
                                 dataBaseHandler.signUpUser(userPackage.username, userPackage.password, userPackage.highScore);
                                 oos.writeObject("horoshechno");
                                 oos.reset();
@@ -127,30 +133,23 @@ public class EchoMultiServer {
         }
 
         private void sendLeaderboard() {
-            System.out.println("sendLB");
             ResultSet resultSet = dataBaseHandler.getTable();
             try {
                 oos.writeObject(resultSet);
+                oos.reset();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        private boolean isCorrectUsername(String username) {
-            ResultSet res = dataBaseHandler.getUser(username);
-            return matchCounter(res) >= 1;
-        }
 
-        private boolean isCorrectPassword(String username, String password) {
-            ResultSet res = dataBaseHandler.getPassword(username, password);
-            return matchCounter(res) >= 1;
-        }
 
         private int matchCounter(ResultSet res) {
             int counter = 0;
             try {
                 while (res.next())
                     counter++;
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

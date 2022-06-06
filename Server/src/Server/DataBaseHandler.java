@@ -49,6 +49,39 @@ public class DataBaseHandler {
         return rs;
     }
 
+
+    public boolean isUsernameExist(String username) {
+        try {
+            String lesha = "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE login = '" + username + "');";
+
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(lesha);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString(1).equals("1");
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public boolean isCorrectPassword(String username, String password) {
+        try {
+            String lesha = "SELECT EXISTS(SELECT * FROM " + tableName + " WHERE login = '" + username + "' AND password = '" + password + "' );";
+
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(lesha);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next())
+                return resultSet.getString(1).equals("1");
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
     public ResultSet getTable() {
         ResultSet rs = null;
         String select = "SELECT * FROM " + tableName + "";
@@ -68,7 +101,7 @@ public class DataBaseHandler {
         String insert = "INSERT INTO " + tableName + " VALUES (?,?,?);";
         PreparedStatement preparedStatement = null;
         try {
-
+            System.out.println(username + " sign up");
             preparedStatement = getDbConnection().prepareStatement(insert);
             preparedStatement.setString(1, username);
             preparedStatement.setInt(2, highScore);
