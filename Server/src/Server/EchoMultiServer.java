@@ -1,8 +1,11 @@
-package TwentyFortyEight.Server;
+package Server;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Vector;
 
 
@@ -10,7 +13,7 @@ public class EchoMultiServer {
 
     private static EchoMultiServer instance;
     private static int clientCount = 0;
-    private static final Vector<EchoClientHandler> clientList = new Vector<>();
+   // private static final HashMap<String, EchoClientHandler> clientList = new HashMap<>();
     private static int id = 0;
 
 
@@ -28,7 +31,7 @@ public class EchoMultiServer {
             serverSocket = new ServerSocket(port);
             while (true) {
                 EchoClientHandler ech = new EchoClientHandler(serverSocket.accept(), id++);
-                clientList.add(ech);
+                // clientList.put(,ech);
                 clientCount++;
 
                 ech.start();
@@ -41,10 +44,12 @@ public class EchoMultiServer {
     }
 
     public static String getClients() {
-        StringBuilder names = new StringBuilder();
+       /* StringBuilder names = new StringBuilder();
         for (EchoClientHandler client : clientList)
             names.append("Client ").append(client.getClientId()).append("\n");
-        return names.toString();
+        return names.toString();*/
+
+        return "";
     }
 
 
@@ -73,8 +78,15 @@ public class EchoMultiServer {
             try {
                 oos = new ObjectOutputStream(clientSocket.getOutputStream());
                 ois = new ObjectInputStream(clientSocket.getInputStream());
-
+                Object readObject= ois.readObject();
                 while (!clientSocket.isClosed() && !clientSocket.isOutputShutdown() && !clientSocket.isInputShutdown()) {
+
+                    if(readObject instanceof String string) {
+                        switch (string) {
+                          //  case "LEADERBOARD" -> EchoMultiServer.sendLeaderboard;
+                        }
+                    }
+
                     String request = ois.readUTF();
                     switch (request) {
                         case "SEND.PACKAGE" -> getObj();
@@ -88,6 +100,8 @@ public class EchoMultiServer {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -124,7 +138,7 @@ public class EchoMultiServer {
                 oos.reset();
 
                 System.out.println(getClients());
-                System.out.println(clientList.size());
+            //    System.out.println(clientList.size());
 
 
             } catch (IOException e) {

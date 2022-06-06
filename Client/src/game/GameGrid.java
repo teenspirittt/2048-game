@@ -1,4 +1,4 @@
-package TwentyFortyEight.game;
+package game;
 
 import java.util.Random;
 

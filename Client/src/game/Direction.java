@@ -1,4 +1,4 @@
-package TwentyFortyEight.game;
+package game;
 
 public enum Direction {
 

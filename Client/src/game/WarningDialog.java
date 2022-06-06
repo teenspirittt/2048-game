@@ -1,4 +1,4 @@
-package TwentyFortyEight.game;
+package game;
 
 import javafx.scene.control.Alert;
 

@@ -1,23 +1,29 @@
-package TwentyFortyEight.game;
+package game;
 
 
+import Server.UserPackage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+
 
 public class EchoClient {
     private Socket clientSocket;
-
+    boolean isConnected = false;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
 
-    public void startConnection(String username,String ip, int port) {
+    public void startConnection(String username, String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
-
+            isConnected = true;
             oos = new ObjectOutputStream(clientSocket.getOutputStream());
             ois = new ObjectInputStream(clientSocket.getInputStream());
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -25,18 +31,17 @@ public class EchoClient {
 
 
     public void sendInfo() {
-        try{
+        try {
             oos.writeUTF("SEND.PACKAGE");
             oos.reset();
 
-           // oos.writeObject();
+            // oos.writeObject();
             oos.reset();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 
     public String getClientsList() {

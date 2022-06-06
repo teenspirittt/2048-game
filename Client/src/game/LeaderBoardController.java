@@ -1,7 +1,8 @@
-package TwentyFortyEight.game;
+package game;
 
-import TwentyFortyEight.view.LeaderBoardView;
+
 import javafx.scene.input.KeyCode;
+import view.LeaderBoardView;
 
 public class LeaderBoardController {
 

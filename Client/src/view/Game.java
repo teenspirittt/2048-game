@@ -1,8 +1,9 @@
-package TwentyFortyEight.view;
+package view;
 
-import java.util.*;
-
-import TwentyFortyEight.game.*;
+import game.Direction;
+import game.GameGrid;
+import game.RegisterController;
+import game.Tile;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -18,6 +19,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.util.Optional;
+import java.util.Vector;
 
 
 public class Game {
@@ -101,7 +105,7 @@ public class Game {
 
 
     private void stageInit() {
-        Image icon = new Image("resources/2048.png");
+        Image icon = new Image("/048.png");
         stage.getIcons().add(icon);
         stage.setTitle("2048 by teenspirit");
         stage.setResizable(false);

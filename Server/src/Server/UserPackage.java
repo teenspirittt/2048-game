@@ -1,4 +1,4 @@
-package TwentyFortyEight.Server;
+package Server;
 
 public class UserPackage {
     public int highScore;
