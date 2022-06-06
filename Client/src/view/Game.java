@@ -1,9 +1,6 @@
 package view;
 
-import game.Direction;
-import game.GameGrid;
-import game.RegisterController;
-import game.Tile;
+import game.*;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -268,7 +265,10 @@ public class Game {
     }
 
     private void showLeaderboardLogic() {
-        showLeaderboard.setOnAction(actionEvent -> RegisterController.getInstance().showRegWindow());
+        showLeaderboard.setOnAction(actionEvent -> {
+            RegisterController.getInstance().showRegWindow();
+        });
+
     }
 
     private void exitLogic() {

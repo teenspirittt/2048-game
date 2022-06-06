@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -13,7 +15,7 @@ public class EchoMultiServer {
 
     private static EchoMultiServer instance;
     private static int clientCount = 0;
-   // private static final HashMap<String, EchoClientHandler> clientList = new HashMap<>();
+    // private static final HashMap<String, EchoClientHandler> clientList = new HashMap<>();
     private static int id = 0;
 
 
@@ -68,6 +70,7 @@ public class EchoMultiServer {
         private ObjectOutputStream oos;
         private final int id;
         EchoMultiServer ems = EchoMultiServer.getInstance();
+        DataBaseHandler dataBaseHandler = new DataBaseHandler();
 
         public EchoClientHandler(Socket socket, int id) {
             this.id = id;
@@ -76,22 +79,40 @@ public class EchoMultiServer {
 
         public void run() {
             try {
+
                 oos = new ObjectOutputStream(clientSocket.getOutputStream());
                 ois = new ObjectInputStream(clientSocket.getInputStream());
-                Object readObject= ois.readObject();
+
+                Object readObject = ois.readObject();
                 while (!clientSocket.isClosed() && !clientSocket.isOutputShutdown() && !clientSocket.isInputShutdown()) {
 
-                    if(readObject instanceof String string) {
-                        switch (string) {
-                          //  case "LEADERBOARD" -> EchoMultiServer.sendLeaderboard;
+                    if (readObject instanceof String) {
+                        sendLeaderboard();
+                    } else {
+                        UserPackage userPackage = (UserPackage) readObject;
+                        if (userPackage.getMessage().equals("LOGIN")) {
+                            if (isCorrectUsername(userPackage.username)) {
+                                if (isCorrectPassword(userPackage.username, userPackage.password)) {
+                                    oos.writeObject("incorrect password");
+                                    oos.reset();
+                                } else {
+                                    oos.writeObject("correct");
+                                    oos.reset();
+                                }
+                            } else {
+                                oos.writeObject("incorrect username");
+                                oos.reset();
+                            }
+                        } else if (userPackage.getMessage().equals("REGISTER")) {
+                            if (isCorrectUsername(userPackage.username)) {
+                                oos.writeObject("already exist");
+                                oos.reset();
+                            } else {
+                                dataBaseHandler.signUpUser(userPackage.username, userPackage.password, userPackage.highScore);
+                                oos.writeObject("horoshechno");
+                                oos.reset();
+                            }
                         }
-                    }
-
-                    String request = ois.readUTF();
-                    switch (request) {
-                        case "SEND.PACKAGE" -> getObj();
-                        case "GET.PACKAGE" -> sendObj();
-                        case "GET.CLIENTS" -> sendClientsList();
                     }
                 }
                 oos.close();
@@ -105,52 +126,37 @@ public class EchoMultiServer {
             }
         }
 
-
-        public void getObj() {
-/*
+        private void sendLeaderboard() {
+            System.out.println("sendLB");
+            ResultSet resultSet = dataBaseHandler.getTable();
             try {
-                System.out.println("get props");
-                ems.prpPck = (PropertyPackage) ois.readObject();
-                ems.prpPck.printProperties();
-                ems.tmp = ems.prpPck;
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-*/
-
-        }
-
-        public void sendObj() {
-            /*try {
-                System.out.println("send props");
-                ems.tmp.printProperties();
-                oos.writeObject(ems.tmp);
-                oos.reset();
+                oos.writeObject(resultSet);
             } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-        }
-
-        public void sendClientsList() {
-            System.out.println("sending list of on-line clients");
-            try {
-                oos.writeUTF(getClients());
-                oos.reset();
-
-                System.out.println(getClients());
-            //    System.out.println(clientList.size());
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
-
-        protected int getClientId() {
-            return id;
+        private boolean isCorrectUsername(String username) {
+            ResultSet res = dataBaseHandler.getUser(username);
+            return matchCounter(res) >= 1;
         }
 
+        private boolean isCorrectPassword(String username, String password) {
+            ResultSet res = dataBaseHandler.getPassword(username, password);
+            return matchCounter(res) >= 1;
+        }
 
+        private int matchCounter(ResultSet res) {
+            int counter = 0;
+            try {
+                while (res.next())
+                    counter++;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return counter;
+        }
     }
+
+
 }

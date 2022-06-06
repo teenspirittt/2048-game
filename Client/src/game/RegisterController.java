@@ -2,6 +2,7 @@ package game;
 
 
 import Server.DataBaseHandler;
+import Server.UserPackage;
 import javafx.scene.input.KeyCode;
 import view.Game;
 import view.RegisterView;
@@ -42,7 +43,18 @@ public class RegisterController {
             String username = registerView.getLogUsernameField().getText().trim();
             String password = registerView.getLogPasswordField().getText();
             if (!username.equals("") && !password.equals("")) {
-                loginUser(username, password);
+                UserPackage user = new UserPackage(username, password, Game.getInstance().getHighScore(), "LOGIN");
+                EchoClient.sendObj(user);
+                if (EchoClient.getResponse().equals("incorrect username")) {
+                    WarningDialog.userNotFound(username);
+                }
+                if (EchoClient.getResponse().equals("incorrect password")) {
+                    WarningDialog.incorrectPassword();
+                }
+                if (EchoClient.getResponse().equals("correct")) {
+                    ResultSet rs = EchoClient.getLeaderBoard();
+                    openLeaderBoardWindow(rs);
+                }
             } else {
                 WarningDialog.emptyField();
             }
@@ -56,57 +68,26 @@ public class RegisterController {
             String password = registerView.getRegPasswordField().getText();
             String confirmPassword = registerView.getRegConfirmPasswordField().getText();
 
-            if (!isCorrectUsername(username)) {
-                if (Objects.equals(password, confirmPassword)) {
-                    if (!password.equals("")) {
-                        dataBaseHandler.signUpUser(username, password, Game.getInstance().getHighScore());
-                        openLeaderBoardWindow();
+            if (!password.equals("") && !confirmPassword.equals("") && !username.equals("")) {
+                if (password.equals(confirmPassword)) {
+                    EchoClient.sendObj(new UserPackage(username, password, Game.getInstance().getHighScore(), "REGISTER"));
+                    if (EchoClient.getResponse().equals("already exist")) {
+                        WarningDialog.usernameInUse(username);
                     } else {
-                        WarningDialog.emptyField();
+                        ResultSet rs = EchoClient.getLeaderBoard();
+                        openLeaderBoardWindow(rs);
                     }
                 } else {
                     WarningDialog.mismatchedPasswords();
                 }
             } else {
-                WarningDialog.usernameInUse(username);
+                WarningDialog.emptyField();
             }
         });
     }
 
-    private void loginUser(String username, String password) {
-        if (isCorrectUsername(username))
-            if (isCorrectPassword(username, password))
-                openLeaderBoardWindow();
-            else
-                WarningDialog.incorrectPassword();
-        else
-            WarningDialog.userNotFound(username);
-    }
 
-    private boolean isCorrectUsername(String username) {
-        DataBaseHandler dataBaseHandler = new DataBaseHandler();
-        ResultSet res = dataBaseHandler.getUser(username);
-        return matchCounter(res) >= 1;
-    }
-
-    private boolean isCorrectPassword(String username, String password) {
-        DataBaseHandler dataBaseHandler = new DataBaseHandler();
-        ResultSet res = dataBaseHandler.getPassword(username, password);
-        return matchCounter(res) >= 1;
-    }
-
-    private int matchCounter(ResultSet res) {
-        int counter = 0;
-        try {
-            while (res.next())
-                counter++;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return counter;
-    }
-
-    private void openLeaderBoardWindow() {
+    private void openLeaderBoardWindow(ResultSet rs) {
         registerView.getScene().getWindow().hide();
         LeaderBoardController.getInstance().showLBWindow();
         Game.getInstance().getShowLeaderboard().setOnAction(actionEvent -> LeaderBoardController.getInstance().showLBWindow());

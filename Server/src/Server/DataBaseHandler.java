@@ -49,9 +49,23 @@ public class DataBaseHandler {
         return rs;
     }
 
+    public ResultSet getTable() {
+        ResultSet rs = null;
+        String select = "SELECT * FROM " + tableName + "";
+        try {
+
+            PreparedStatement preparedStatement = getDbConnection().prepareStatement(select);
+            rs = preparedStatement.executeQuery();
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return rs;
+    }
+
 
     public void signUpUser(String username, String password, int highScore) {
-        String insert = "insert into " + tableName + " VALUES (?,?,?);";
+        String insert = "INSERT INTO " + tableName + " VALUES (?,?,?);";
         PreparedStatement preparedStatement = null;
         try {
 
@@ -65,6 +79,5 @@ public class DataBaseHandler {
         }
 
     }
-
 }
 

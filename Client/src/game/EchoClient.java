@@ -3,20 +3,22 @@ package game;
 
 import Server.UserPackage;
 
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.ResultSet;
 
 
 public class EchoClient {
     private Socket clientSocket;
     boolean isConnected = false;
-    private ObjectOutputStream oos;
-    private ObjectInputStream ois;
+    private static ObjectOutputStream oos;
+    private static ObjectInputStream ois;
 
 
-    public void startConnection(String username, String ip, int port) {
+    public void startConnection(String ip, int port) {
         try {
             clientSocket = new Socket(ip, port);
             isConnected = true;
@@ -29,13 +31,23 @@ public class EchoClient {
         }
     }
 
-
-    public void sendInfo() {
+    public static ResultSet getLeaderBoard() {
+        ResultSet resultSet = null;
         try {
-            oos.writeUTF("SEND.PACKAGE");
+            System.out.println("getLB");
+            oos.writeObject("LEAD.BOARD");
             oos.reset();
+            System.out.println(ois.readObject());
+           // resultSet = (ResultSet) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return resultSet;
+    }
 
-            // oos.writeObject();
+    public static void sendObj(UserPackage userPackage) {
+        try {
+            oos.writeObject(userPackage);
             oos.reset();
 
         } catch (IOException e) {
@@ -43,16 +55,17 @@ public class EchoClient {
         }
     }
 
-
-    public String getClientsList() {
+    public static String getResponse() {
         String tmp = null;
         try {
-            oos.writeUTF("GET.CLIENTS");
-            oos.reset();
-            tmp = ois.readUTF();
+            System.out.println();
+            tmp = (String) ois.readObject();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
+        System.out.println(tmp);
         return tmp;
     }
 
@@ -65,5 +78,7 @@ public class EchoClient {
             e.printStackTrace();
         }
     }
+
+
 }
 
