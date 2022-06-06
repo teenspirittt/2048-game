@@ -8,7 +8,7 @@ public enum Direction {
     LEFT(-130, 4);
 
     private final int amountOfMovement;
-    private final int rotations; // number of time the board has to rotate to move
+    private final int rotations;
 
     Direction(int amountOfMovement, int rotations) {
         this.amountOfMovement = amountOfMovement;

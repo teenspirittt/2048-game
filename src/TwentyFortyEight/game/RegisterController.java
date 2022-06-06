@@ -57,10 +57,12 @@ public class RegisterController {
 
             if (!isCorrectUsername(username)) {
                 if (Objects.equals(password, confirmPassword)) {
-                    if (!password.equals(""))
+                    if (!password.equals("")) {
                         dataBaseHandler.signUpUser(username, password, Game.getInstance().getHighScore());
-                    else
+                        openLeaderBoardWindow();
+                    } else {
                         WarningDialog.emptyField();
+                    }
                 } else {
                     WarningDialog.mismatchedPasswords();
                 }
@@ -106,5 +108,6 @@ public class RegisterController {
     private void openLeaderBoardWindow() {
         registerView.getScene().getWindow().hide();
         LeaderBoardController.getInstance().showLBWindow();
+        Game.getInstance().getShowLeaderboard().setOnAction(actionEvent -> LeaderBoardController.getInstance().showLBWindow());
     }
 }

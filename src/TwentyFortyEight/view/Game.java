@@ -290,4 +290,8 @@ public class Game {
     public int getCurrentScore() {
         return currentScore;
     }
+
+    public MenuItem getShowLeaderboard() {
+        return showLeaderboard;
+    }
 }
