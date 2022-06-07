@@ -25,12 +25,13 @@ public class LeaderBoardController {
     LeaderBoardView rl = LeaderBoardView.getInstance();
 
 
-    public void showLBWindow() {
+    public void showLBWindow(Vector<UserPackage> userPackages) {
         rl.getStage().show();
         rl.getScene().setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE)
                 hideRegWin();
         });
+        drawTable(userPackages);
     }
 
     public void drawTable(Vector<UserPackage> userPackages) {

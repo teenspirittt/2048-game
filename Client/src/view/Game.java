@@ -144,9 +144,9 @@ public class Game {
         } else if (grid.getHighestTile() == 4096) {
             openWinDialog();
         } else {
-            openLoseDialog();
             if (currentScore > highScore)
                 highScore = currentScore;
+            openLoseDialog();
         }
     }
 

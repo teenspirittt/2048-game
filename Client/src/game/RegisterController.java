@@ -1,16 +1,12 @@
 package game;
 
 
-import Server.DataBaseHandler;
 import Server.UserPackage;
 import javafx.scene.input.KeyCode;
 import view.Game;
 import view.LeaderBoardView;
 import view.RegisterView;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Objects;
 import java.util.Vector;
 
 public class RegisterController {
@@ -58,7 +54,7 @@ public class RegisterController {
                 }
                 if (response.equals("correct")) {
                     Vector<UserPackage> userPackages = EchoClient.getLeaderBoard();
-                    openLeaderBoardWindow(userPackages);
+                    openLeaderBoardWindow();
                 }
             } else {
                 WarningDialog.emptyField();
@@ -79,8 +75,7 @@ public class RegisterController {
                     if (EchoClient.getResponse().equals("already exist")) {
                         WarningDialog.usernameInUse(username);
                     } else {
-                        Vector<UserPackage> userPackages = EchoClient.getLeaderBoard();
-                        openLeaderBoardWindow(userPackages);
+                        openLeaderBoardWindow();
                     }
                 } else {
                     WarningDialog.mismatchedPasswords();
@@ -91,15 +86,14 @@ public class RegisterController {
         });
     }
 
-
-    private void openLeaderBoardWindow(Vector<UserPackage> userPackages) {
-
+    private void openLeaderBoardWindow() {
         registerView.getScene().getWindow().hide();
-        LeaderBoardController.getInstance().showLBWindow();
+        LeaderBoardController.getInstance().showLBWindow(EchoClient.getLeaderBoard());
         LeaderBoardView.getInstance().tableInit();
 
-
-        Game.getInstance().getShowLeaderboard().setOnAction(actionEvent -> LeaderBoardController.getInstance().showLBWindow());
-        LeaderBoardController.getInstance().drawTable(userPackages);
+        Game.getInstance().getShowLeaderboard().setOnAction(actionEvent -> {
+            Vector<UserPackage> userPackages = EchoClient.getLeaderBoard();
+            LeaderBoardController.getInstance().showLBWindow(userPackages);
+        });
     }
 }

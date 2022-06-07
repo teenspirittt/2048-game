@@ -35,7 +35,6 @@ public class EchoClient {
     public static Vector<UserPackage> getLeaderBoard() {
         Vector<UserPackage> userPackages;
         try {
-            System.out.println("getLB");
             oos.writeObject("LEAD.BOARD");
             oos.reset();
 
